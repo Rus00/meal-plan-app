@@ -29,6 +29,7 @@ const PlanDay = () => {
             <h1 className="h1">Plan Day</h1>
 
             <input 
+              id="mealSearchPlanDay"
               type="text"
               placeholder="Find a meal..."
               onChange={(e) => handleOnTextInputChange(e, mealsFiltered)}/>
@@ -41,8 +42,9 @@ const PlanDay = () => {
                   <li key={i}>
                     {meal}
                     <input 
-                    type="checkbox"
-                    onChange={(e) => handleOnCheck(e, meal)}/>
+                      id={meal}
+                      type="checkbox"
+                      onChange={(e) => handleOnCheck(e, meal)}/>
                   </li>
                 </div>)
               }

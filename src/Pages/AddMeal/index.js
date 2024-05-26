@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState} from 'react'
 import Button from '../../Button';
 import './AddMeals.css';
 
@@ -9,51 +9,15 @@ const allMeals = ["Apple Pie","Carrot Cake","Hamburger","Jumbalaya","Lasagna","M
   .map(meal => ({name: meal, isSelected: false, isVisible: true}))
 
 const AddMeal = () => {
-  const [mealsFiltered,setMealsFiltered] = useState(allMeals)
-  const [regexMatch,setRegexMatch] = useState("")
+  const [meals,setmeals] = useState(allMeals)
+  // const [regexMatch,setRegexMatch] = useState("")
 
-  const handleOnTextInputChange = async (e) => { // updates filter
+  const handleOnTextInputChange = async ({target}) => { // updates filter
 
     /* TODO investigate escaping regex */
 
-    setRegexMatch(e.target.value)
-      
-    console.log("\""+e.target.value+"\" yields:")
-    console.log(mealsFiltered)
-  }
-
-  const handleAllMealsBtnClick = (e) => {
-    console.log("Clicked button at "+e.clientX+", "+e.clientY+" from parent!")
-    const dataToSend = mealsFiltered.filter(
-      meal => meal.isSelected
-    )
-    console.log("SENDING:",dataToSend)
-
-    const updatedArr = mealsFiltered.map(meal => {return {...meal,isSelected: e.target.checked}})
-    setMealsFiltered(updatedArr)
-
-    setRegexMatch("")
-  }
-
-  const handleOnCheck = async (e, selectedMeal, i) => { // sets meal > isSelected
-
-    const updatedArr = mealsFiltered.map(meal => {
-      if (meal.name === selectedMeal.name) {
-        return {
-          ...meal,isSelected: e.target.checked
-        }
-      }
-      return meal
-    })
-    setMealsFiltered(updatedArr)
-    console.log(selectedMeal)
-    console.log("\""+selectedMeal.name+"\" set to "+e.target.checked)
-    console.log(mealsFiltered)
-  }
-
-  useEffect(() => {
-    const updatedArr = mealsFiltered.map(meal => {
-      if (meal.name.toLowerCase().match(new RegExp(regexMatch.toLowerCase()))) {
+    const updatedArr = meals.map(meal => {
+      if (meal.name.toLowerCase().match(new RegExp(target.value.toLowerCase()))) {
         return {
           ...meal,isVisible: true
         }
@@ -62,8 +26,55 @@ const AddMeal = () => {
         ...meal,isVisible: false
       }
     })
-    setMealsFiltered(updatedArr)
-  },[regexMatch])
+    setmeals(updatedArr);
+    // setRegexMatch(target.value)
+      
+    console.log("\""+target.value+"\" yields:")
+    console.log(meals)
+  }
+
+  const handleAllMealsBtnClick = (e) => {
+    console.log("Clicked button at "+e.clientX+", "+e.clientY+" from parent!")
+    const dataToSend = meals.filter(
+      meal => meal.isSelected
+    )
+    console.log("SENDING:",dataToSend)
+
+    const updatedArr = meals.map(meal => {return {...meal,isSelected: false}});
+    setmeals(updatedArr);
+
+    // setRegexMatch("")
+  }
+
+  const handleOnCheck = async ({target}, selectedMeal, i) => { // sets meal > isSelected
+
+    const updatedArr = meals.map(meal => {
+      if (meal.name === selectedMeal.name) {
+        return {
+          ...meal,isSelected: target.checked
+        }
+      }
+      return meal
+    })
+    setmeals(updatedArr);
+    console.log(selectedMeal);
+    console.log("\""+selectedMeal.name+"\" set to "+target.checked);
+    console.log(meals);
+  }
+
+  // useEffect(() => {
+  //   const updatedArr = meals.map(meal => {
+  //     if (meal.name.toLowerCase().match(new RegExp(regexMatch.toLowerCase()))) {
+  //       return {
+  //         ...meal,isVisible: true
+  //       }
+  //     }
+  //     return {
+  //       ...meal,isVisible: false
+  //     }
+  //   })
+  //   setmeals(updatedArr)
+  // },[regexMatch])
 
   return (
     <div className="page-wrapper">
@@ -71,11 +82,13 @@ const AddMeal = () => {
             <h1 className="h1">Add Meals</h1>
 
             <input 
+              id="mealSearchAddMeals"
               className="meal-search-input"
               type="text"
               placeholder="Filter meals..."
-              onChange={(e) => handleOnTextInputChange(e, mealsFiltered)}
-              value={regexMatch}/>
+              onChange={(e) => handleOnTextInputChange(e)}
+              // value={regexMatch}
+              />
 
             <Button
               text={addMealsButtonText}
@@ -84,16 +97,18 @@ const AddMeal = () => {
 
             <div className="meal-wrapper">
               <ul className="meal-ul">
-                {mealsFiltered.filter(meal => meal.isSelected).map((meal, i) => 
+                {meals.filter(meal => meal.isVisible).map((meal, i) => 
                   <li
                     className="meal-li"
                     key={i}>
                     <div className="meal-li-div">
                       <input 
+                        id={meal.name}
                         type="checkbox"
                         htmlFor="meal"
                         checked={(meal.isSelected)}
                         onChange={(e) => handleOnCheck(e, meal, i)}/>
+                        
                       <div className="meal-li-title">
                         {meal.name}
                       </div>
@@ -103,9 +118,9 @@ const AddMeal = () => {
               </ul>
             </div>
 
-            <div className="meal-wrapper">
+            {/* <div className="meal-wrapper">
               <ul className="meal-ul">
-                {mealsFiltered.filter(meal => !meal.isSelected && meal.isVisible).map((meal, i) => 
+                {meals.filter(meal => !meal.isSelected && meal.isVisible).map((meal, i) => 
                   <li
                     className="meal-li"
                     key={i}>
@@ -122,7 +137,7 @@ const AddMeal = () => {
                   </li>)
                 }
               </ul>
-            </div>
+            </div> */}
         </div>
     </div>
   )

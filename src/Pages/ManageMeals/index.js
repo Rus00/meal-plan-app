@@ -3,22 +3,35 @@ import Button from '../../Button';
 import './ManageMeals.css';
 import { Link } from 'react-router-dom';
 
-let mealsTemp = ["Hamburger","Lasagna","XXX"]
+let mealsTemp = ["Apple Pie","Carrot Cake","Hamburger","Jumbalaya","Lasagna","Meringue Pie","Pea Soup","XXX","YYY","ZZZ"]
+  .map(meal => ({name: meal, isSelected: false, isVisible: true}))
 
 const addMealsButtonText = "Add Meals"
 
 const ManageMeals = () => {
-  const [mealsFiltered,setMealsFiltered] = useState(mealsTemp)
+  const [meals,setmeals] = useState(mealsTemp)
 
-  const handleOnTextInputChange = (e, meals) => {
-    if (e.target.value.length !== 0) {
-      let mealsResult = meals.filter(meal => meal.toLowerCase().includes(e.target.value.toLowerCase())) //regex?
-      console.log("\""+e.target.value+"\" yields:")
-      console.log(mealsResult)
-      setMealsFiltered(mealsResult)
-      return
-    }
-    setMealsFiltered(mealsTemp)
+  const handleOnTextInputChange = ({target}) => {
+    // if (e.target.value.length !== 0) {
+    //   let mealsResult = meals.filter(meal => meal.toLowerCase().includes(e.target.value.toLowerCase())) //regex?
+    //   console.log("\""+e.target.value+"\" yields:")
+    //   console.log(mealsResult)
+    //   setmeals(mealsResult)
+    //   return
+    // }
+    // setmeals(mealsTemp)
+
+    const updatedArr = meals.map(meal => {
+      if (meal.name.toLowerCase().match(new RegExp(target.value.toLowerCase()))) {
+        return {
+          ...meal,isVisible: true
+        }
+      }
+      return {
+        ...meal,isVisible: false
+      }
+    })
+    setmeals(updatedArr);
   }
 
   return (
@@ -32,13 +45,14 @@ const ManageMeals = () => {
             </Link>
 
             <input 
+              id="mealSearchManageMeals"
               type="text"
               placeholder="Find a meal..."
-              onChange={(e) => handleOnTextInputChange(e, mealsFiltered)}/>
+              onChange={(e) => handleOnTextInputChange(e)}/>
 
             <div>
-              {mealsFiltered.map((meal, i) => 
-                <li key={i}>{meal}</li>)
+              {meals.filter(meal => meal.isVisible).map((meal, i) => 
+                <li key={i}>{meal.name}</li>)
               }
             </div>
         </div>
